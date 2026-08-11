@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible package defect without including private data.
+title: "Bug: "
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for helping improve Acceptora Verification for Laravel. Report suspected vulnerabilities through SECURITY.md instead of this public form.
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: PHP and Laravel versions
+      placeholder: PHP 8.4, Laravel 13
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the observed and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest safe example that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Sanitized diagnostics
+      description: Remove tokens, credentials, cookies, personal data, private URLs, and source payloads.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Public-data confirmation
+      options:
+        - label: I removed credentials, personal data, private URLs, and sensitive payloads from this report.
+          required: true

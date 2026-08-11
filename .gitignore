@@ -1,0 +1,17 @@
+/.env
+/.env.*
+!/.env.example
+/.idea/
+/.phpunit.cache/
+/.phpunit.result.cache
+/.phpstan.cache
+/.phpstan.result-cache.php
+/.vscode/
+/auth.json
+/build/
+/composer.lock
+/composer.phar
+/coverage/
+/vendor/
+.DS_Store
+Thumbs.db
