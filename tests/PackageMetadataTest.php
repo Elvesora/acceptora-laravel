@@ -63,7 +63,7 @@ final class PackageMetadataTest extends TestCase
     {
         $manifest = $this->jsonFile(__DIR__.'/../resources/contract-manifest.json');
 
-        $this->assertSame(['name' => 'acceptora/verification-laravel', 'version' => '1.0.0'], $manifest['package']);
+        $this->assertSame(['name' => 'acceptora/verification-laravel', 'version' => '1.0.1'], $manifest['package']);
         $this->assertSame(['version' => '1.0.0'], $manifest['integration']);
         $this->assertSame(['version' => '1.1.0'], $manifest['skill']);
         $this->assertSame(
@@ -71,7 +71,7 @@ final class PackageMetadataTest extends TestCase
             $manifest['contract'],
         );
         $this->assertSame(['name' => 'Acceptora Verification', 'version' => '1.0.0'], $manifest['server']);
-        $this->assertSame('1.0.0', Client::PACKAGE_VERSION);
+        $this->assertSame('1.0.1', Client::PACKAGE_VERSION);
         $this->assertSame('1.0.0', Client::CONTRACT_VERSION);
         $this->assertSame('1.0.0', Client::INTEGRATION_VERSION);
         $this->assertSame('1.1.0', Client::SKILL_VERSION);
@@ -152,8 +152,9 @@ final class PackageMetadataTest extends TestCase
         $this->assertStringContainsString('## Usage examples and client methods', $readme);
         $this->assertStringContainsString('without adding a local Acceptora password', $readme);
         $this->assertStringNotContainsString('Creating a credential requires the current Acceptora password', $readme);
-        $this->assertStringContainsString('## [Unreleased]', $changelog);
+        $this->assertStringContainsString('## [1.0.1] - 2026-08-23', $changelog);
         $this->assertStringContainsString('## [1.0.0]', $changelog);
+        $this->assertStringNotContainsString('[Unreleased]', $changelog);
         $this->assertDoesNotMatchRegularExpression('/(?:no stable public release|development branches|pending publication)/i', $readme.$changelog);
     }
 

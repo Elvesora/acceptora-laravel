@@ -47,7 +47,7 @@ The published `config/acceptora-verification.php` file exposes these settings:
 | `ACCEPTORA_VERIFICATION_MAX_REQUEST_BYTES` | `max_request_bytes` | `2000000` | Maximum outbound JSON request size |
 | `ACCEPTORA_VERIFICATION_MAX_RESPONSE_BYTES` | `max_response_bytes` | `4000000` | Maximum accepted response size |
 | `ACCEPTORA_VERIFICATION_MAX_TOOL_PAGES` | `max_tool_pages` | `20` | Maximum pages followed by paginated tool reads |
-| `ACCEPTORA_VERIFICATION_USER_AGENT` | `user_agent` | `Acceptora-Verification-Laravel/1.0.0` | Outbound HTTP user agent |
+| `ACCEPTORA_VERIFICATION_USER_AGENT` | `user_agent` | `Acceptora-Verification-Laravel/1.0.1` | Outbound HTTP user agent |
 
 Read values through Laravel configuration, for example `config('acceptora-verification.timeout')`. Set `base_url` to the canonical origin shown in the Acceptora project connection settings, without appending `/api`, `/mcp`, or another path. Keep it on HTTPS in deployed environments.
 
@@ -259,7 +259,7 @@ $client = app(VerificationClientInterface::class);
 $compatibility = $client->preflight(requestId: $deploymentId);
 ```
 
-The preflight checks server readiness, the advertised contract metadata, and the MCP tool registry against the package's bundled v1 manifest. The current manifest expects skill version `1.1.0` while the package, integration, contract, and server identities remain `1.0.0`. It throws `CompatibilityException` when the server and package are incompatible. Treat that failure as a hard stop: use compatible package and server versions before sending writes. Verify REST separately with `openApiDocument()` and `projectMetadata()` as described above.
+The preflight checks server readiness, the advertised contract metadata, and the MCP tool registry against the package's bundled v1 manifest. The current manifest identifies package version `1.0.1` and expects skill version `1.1.0`, while the integration, contract, and server identities remain `1.0.0`. It throws `CompatibilityException` when the server and package are incompatible. Treat that failure as a hard stop: use compatible package and server versions before sending writes. Verify REST separately with `openApiDocument()` and `projectMetadata()` as described above.
 
 Run preflight again after either the Acceptora API contract or this package is upgraded.
 

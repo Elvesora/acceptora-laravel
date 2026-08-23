@@ -2,7 +2,7 @@
   "schema_version": 1,
   "package": {
     "name": "acceptora/verification-laravel",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "contract": {
     "version": "1.0.0",

@@ -10,5 +10,5 @@ return [
     'max_request_bytes' => (int) env('ACCEPTORA_VERIFICATION_MAX_REQUEST_BYTES', 2_000_000),
     'max_response_bytes' => (int) env('ACCEPTORA_VERIFICATION_MAX_RESPONSE_BYTES', 4_000_000),
     'max_tool_pages' => (int) env('ACCEPTORA_VERIFICATION_MAX_TOOL_PAGES', 20),
-    'user_agent' => env('ACCEPTORA_VERIFICATION_USER_AGENT', 'Acceptora-Verification-Laravel/1.0.0'),
+    'user_agent' => env('ACCEPTORA_VERIFICATION_USER_AGENT', 'Acceptora-Verification-Laravel/1.0.1'),
 ];

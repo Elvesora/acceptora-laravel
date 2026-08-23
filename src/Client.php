@@ -50,7 +50,7 @@ use Throwable;
 
 final class Client implements VerificationClientInterface
 {
-    public const PACKAGE_VERSION = '1.0.0';
+    public const PACKAGE_VERSION = '1.0.1';
 
     public const CONTRACT_VERSION = '1.0.0';
 
@@ -232,7 +232,7 @@ final class Client implements VerificationClientInterface
         private readonly int $maxResponseBytes = 4_000_000,
         private readonly int $maxToolPages = 20,
         #[\SensitiveParameter]
-        private readonly string $userAgent = 'acceptora-verification-laravel/1.0.0',
+        private readonly string $userAgent = 'acceptora-verification-laravel/1.0.1',
         private readonly ?ContractManifest $contractManifest = null,
     ) {
         $this->assertConfiguration($baseUrl);
