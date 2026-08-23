@@ -56,7 +56,7 @@ final class Client implements VerificationClientInterface
 
     public const INTEGRATION_VERSION = '1.0.0';
 
-    public const SKILL_VERSION = '1.0.0';
+    public const SKILL_VERSION = '1.1.0';
 
     public const MCP_PROTOCOL_VERSION = '2025-11-25';
 
@@ -153,7 +153,6 @@ final class Client implements VerificationClientInterface
     /** @var list<string> */
     private const PUBLIC_ERROR_CODES = [
         'AUTH_REQUIRED',
-        'REAUTHENTICATION_REQUIRED',
         'SCOPE_DENIED',
         'FEATURE_AMBIGUOUS',
         'FEATURE_ARCHIVED',

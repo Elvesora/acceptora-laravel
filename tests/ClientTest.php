@@ -579,7 +579,7 @@ final class ClientTest extends TestCase
             'data' => [
                 'contract_version' => null,
                 'integration_version' => '1.0.0',
-                'skill_version' => '1.0.0',
+                'skill_version' => '1.1.0',
                 'schema_registry' => 'contracts/v1/mcp-tools.json',
                 $this->token() => $this->token(),
             ],
@@ -1031,7 +1031,7 @@ final class ClientTest extends TestCase
         $client->checkCompletionGate([]);
     }
 
-    public function test_preflight_stops_on_readiness_contract_and_tool_registry_mismatches(): void
+    public function test_preflight_stops_on_readiness_version_and_tool_registry_mismatches(): void
     {
         $preflightLogger = new ArrayLogger;
         $notReady = $this->client([$this->healthResponse(503, false)], logger: $preflightLogger);
@@ -1054,6 +1054,19 @@ final class ClientTest extends TestCase
         try {
             $wrongContract->preflight('request-contract-mismatch');
             $this->fail('Expected contract mismatch to block preflight.');
+        } catch (CompatibilityException $exception) {
+            $this->assertSame('CONTRACT_UNSUPPORTED', $exception->errorCode);
+            $this->assertInstanceOf(ContractMismatchException::class, $exception);
+        }
+
+        $wrongSkill = $this->client([
+            $this->healthResponse(),
+            $this->contractResponse(skillVersion: '1.0.0'),
+        ]);
+
+        try {
+            $wrongSkill->preflight('request-skill-mismatch');
+            $this->fail('Expected skill mismatch to block preflight.');
         } catch (CompatibilityException $exception) {
             $this->assertSame('CONTRACT_UNSUPPORTED', $exception->errorCode);
             $this->assertInstanceOf(ContractMismatchException::class, $exception);
@@ -1115,6 +1128,8 @@ final class ClientTest extends TestCase
 
         $this->assertTrue($result->health->ready());
         $this->assertSame('1.0.0', $result->contract->contractVersion());
+        $this->assertSame('1.0.0', $result->contract->integrationVersion());
+        $this->assertSame('1.1.0', $result->contract->skillVersion());
         $this->assertSame(Client::MCP_PROTOCOL_VERSION, $result->protocolVersion);
         $this->assertSame(Client::SUPPORTED_TOOLS, array_map(
             static fn ($tool): string => $tool->name,
@@ -1267,6 +1282,7 @@ final class ClientTest extends TestCase
             $this->assertSame($path, $request->getUri()->getPath());
             $this->assertSame('POST', $request->getMethod());
             $this->assertSame(Client::CONTRACT_VERSION, $payload['versions']['contract_version']);
+            $this->assertSame(Client::SKILL_VERSION, $payload['versions']['skill_version']);
             $this->assertSame('acceptora-verification-laravel', $payload['versions']['integration_name']);
         }
 
@@ -1457,13 +1473,13 @@ PHP;
         ], $headers);
     }
 
-    private function contractResponse(string $contractVersion = '1.0.0'): Response
+    private function contractResponse(string $contractVersion = '1.0.0', string $skillVersion = '1.1.0'): Response
     {
         return $this->jsonResponse(200, [
             'data' => [
                 'contract_version' => $contractVersion,
                 'integration_version' => '1.0.0',
-                'skill_version' => '1.0.0',
+                'skill_version' => $skillVersion,
                 'schema_registry' => 'contracts/v1/mcp-tools.json',
             ],
             'meta' => ['contract_version' => $contractVersion],

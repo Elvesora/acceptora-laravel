@@ -5,6 +5,16 @@ All notable changes to this package are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and releases follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### Added
+
+- Document the optional `evidence_sufficiency` and structured `blocker_reason` fields for automated evidence, and pin the updated reconciliation and verification-exception input schema digests.
+
+### Changed
+
+- Update the bundled compatibility identity and request metadata to Acceptora Agent Skill `1.1.0`; package, integration, contract, and server identities remain `1.0.0`.
+- Document that verified Google-authenticated owners can create project credentials without configuring a local password.
+- Remove the obsolete password-confirmation error code from the published compatibility metadata.
+
 ## [1.0.0] - 2026-08-11
 
 ### Added

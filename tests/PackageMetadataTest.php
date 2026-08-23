@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Acceptora\Verification\Laravel\Tests;
 
+use Acceptora\Verification\Laravel\Client;
 use PHPUnit\Framework\TestCase;
 
 final class PackageMetadataTest extends TestCase
@@ -11,7 +12,6 @@ final class PackageMetadataTest extends TestCase
     /** @var list<string> */
     private const ERROR_CODES = [
         'AUTH_REQUIRED',
-        'REAUTHENTICATION_REQUIRED',
         'SCOPE_DENIED',
         'FEATURE_AMBIGUOUS',
         'FEATURE_ARCHIVED',
@@ -65,12 +65,16 @@ final class PackageMetadataTest extends TestCase
 
         $this->assertSame(['name' => 'acceptora/verification-laravel', 'version' => '1.0.0'], $manifest['package']);
         $this->assertSame(['version' => '1.0.0'], $manifest['integration']);
-        $this->assertSame(['version' => '1.0.0'], $manifest['skill']);
+        $this->assertSame(['version' => '1.1.0'], $manifest['skill']);
         $this->assertSame(
             ['version' => '1.0.0', 'mcp_protocol_version' => '2025-11-25'],
             $manifest['contract'],
         );
         $this->assertSame(['name' => 'Acceptora Verification', 'version' => '1.0.0'], $manifest['server']);
+        $this->assertSame('1.0.0', Client::PACKAGE_VERSION);
+        $this->assertSame('1.0.0', Client::CONTRACT_VERSION);
+        $this->assertSame('1.0.0', Client::INTEGRATION_VERSION);
+        $this->assertSame('1.1.0', Client::SKILL_VERSION);
         $this->assertSame([
             ['name' => 'readiness', 'method' => 'GET', 'path' => '/api/health', 'authentication' => 'none'],
             ['name' => 'contract_info', 'method' => 'GET', 'path' => '/api/contract-version', 'authentication' => 'none'],
@@ -136,6 +140,9 @@ final class PackageMetadataTest extends TestCase
             '`openApiDocument()` and its `paths` and `components.schemas` objects',
             '`listTools()` returns every tool\'s `inputSchema`, `outputSchema`, and annotations',
             'it is not a complete payload schema or evidence that an endpoint is currently available',
+            '`evidence_sufficiency`',
+            '`missing_credentials`',
+            'never creates a human decision or',
             'Laravel does not report them by default',
             'https://www.acceptora.com/contact',
         ] as $requiredPublicGuidance) {
@@ -143,8 +150,10 @@ final class PackageMetadataTest extends TestCase
         }
 
         $this->assertStringContainsString('## Usage examples and client methods', $readme);
+        $this->assertStringContainsString('without adding a local Acceptora password', $readme);
+        $this->assertStringNotContainsString('Creating a credential requires the current Acceptora password', $readme);
+        $this->assertStringContainsString('## [Unreleased]', $changelog);
         $this->assertStringContainsString('## [1.0.0]', $changelog);
-        $this->assertStringNotContainsString('[Unreleased]', $changelog);
         $this->assertDoesNotMatchRegularExpression('/(?:no stable public release|development branches|pending publication)/i', $readme.$changelog);
     }
 

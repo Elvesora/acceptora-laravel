@@ -54,7 +54,7 @@ Read values through Laravel configuration, for example `config('acceptora-verifi
 ## Acceptora account and project setup
 
 1. Sign in at [www.acceptora.com](https://www.acceptora.com) and create a project.
-2. Open the project and select **Settings > Credentials**. Create a credential with a descriptive name and an appropriate expiry. Creating a credential requires the current Acceptora password; accounts created through Google sign-in must set that password first when prompted by Acceptora.
+2. Open the project and select **Settings > Credentials**. Create a credential with a descriptive name and an appropriate expiry. A verified Google-authenticated account can create credentials without adding a local Acceptora password.
 3. Select only the capabilities the integration needs. The standard workflow uses `projects:read`, `features:resolve`, `features:read`, `checklists:write`, `feedback:read`, `feedback:address`, and `gates:read`. Grant the optional `exceptions:write` capability only when the integration must record source-bound verification exceptions.
 4. Copy the bearer token immediately. Acceptora shows the secret once and cannot recover it after the page is left or reloaded.
 5. Open **Settings > Connection**. Copy the canonical origin into `ACCEPTORA_VERIFICATION_BASE_URL`; the project ID, REST base URL, OpenAPI URL, and MCP endpoint shown there identify the same project connection. Put the token in `ACCEPTORA_AGENT_TOKEN`.
@@ -174,6 +174,37 @@ $status = $client->getVerificationStatusRest([
 
 Use `callRestOperation()` with one of the eight stable operation names for dynamic dispatch. REST calls do not initialize or retain an MCP session. No REST or MCP method in this package can make a human decision, dismiss feedback, finally accept work, or delete human verification state.
 
+### Automated evidence semantics
+
+For `reconcile_checklist` and `record_verification_exception`, `outcome`
+records whether an automated command or check ran and what it returned. The
+optional `evidence_sufficiency` field independently records whether the result
+is `sufficient` or `insufficient` proof of the claimed behavior. A passing test
+can still be insufficient evidence, and it never creates a human decision or
+final acceptance.
+
+When `outcome` is `not_run`, an explicit `evidence_sufficiency` can only be
+`insufficient`. The optional `blocker_reason` can identify
+`missing_credentials`, `insufficient_permissions`, `missing_prerequisite`,
+`environment_unavailable`, `external_dependency_unavailable`, `resource_limit`,
+or `other`. Supplying a blocker reason requires `outcome: not_run`; when
+`evidence_sufficiency` is also supplied, it must be `insufficient`.
+
+```php
+$payload['automated_evidence'][] = [
+    'semantic_key' => 'browser.authenticated_checkout',
+    'kind' => 'browser',
+    'name' => 'Authenticated checkout smoke test',
+    'target' => '/checkout',
+    'executed_at' => '2026-08-18T10:00:00Z',
+    'outcome' => 'not_run',
+    'evidence_sufficiency' => 'insufficient',
+    'blocker_reason' => 'missing_credentials',
+    'summary' => 'The test account credential was not available.',
+    'source_revision' => 'git:0123456789abcdef',
+];
+```
+
 ### Named MCP v1 tools
 
 The named methods accept the exact v1 tool argument array and return a tool-specific result:
@@ -199,7 +230,7 @@ $status = app(VerificationClientInterface::class)->getVerificationStatus([
     'versions' => [
         'integration_name' => 'release-automation',
         'integration_version' => '1.0.0',
-        'skill_version' => '1.0.0',
+        'skill_version' => '1.1.0',
         'contract_version' => '1.0.0',
     ],
 ]);
@@ -228,7 +259,7 @@ $client = app(VerificationClientInterface::class);
 $compatibility = $client->preflight(requestId: $deploymentId);
 ```
 
-The preflight checks server readiness, the advertised contract metadata, and the MCP tool registry against the package's bundled v1 manifest. It throws `CompatibilityException` when the server and package are incompatible. Treat that failure as a hard stop: use compatible package and server versions before sending writes. Verify REST separately with `openApiDocument()` and `projectMetadata()` as described above.
+The preflight checks server readiness, the advertised contract metadata, and the MCP tool registry against the package's bundled v1 manifest. The current manifest expects skill version `1.1.0` while the package, integration, contract, and server identities remain `1.0.0`. It throws `CompatibilityException` when the server and package are incompatible. Treat that failure as a hard stop: use compatible package and server versions before sending writes. Verify REST separately with `openApiDocument()` and `projectMetadata()` as described above.
 
 Run preflight again after either the Acceptora API contract or this package is upgraded.
 
